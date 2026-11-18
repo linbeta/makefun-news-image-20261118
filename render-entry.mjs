@@ -1,116 +1,67 @@
-// render-entry.mjs: draws the poster from stories.json with headless Chrome. Development tool only: main.ts never
+// render-entry.mjs: draws the v5 poster from stories.json with headless Chrome. Development tool only: main.ts never
 // runs it, it only checks and copies the committed entry.png.
 //
-//   node render-entry.mjs entry    -> out/final.png, checked, then copied to ./entry.png (the entry)
-//   node render-entry.mjs final    -> out/final.png only (entry.png untouched)
-//   node render-entry.mjs glyphs   -> out/glyphs.png, the overview of every category glyph
-//   node render-entry.mjs tests    -> out/tests/*.png: the day's data plus fallback cases (no stories, one brief, no hero,
-//                                     long text, an over-long tile label, more picks than tiles, ...), and unit checks
-//   node render-entry.mjs          -> final + glyphs
+//   node render-entry.mjs entry   -> out/final.png (checked), copied to ./entry.png
+//   node render-entry.mjs final   -> out/final.png only
+//   node render-entry.mjs glyphs  -> out/glyphs.png is not drawn in v5; the glyph set lives in render/glyphs.mjs
+//   node render-entry.mjs tests   -> data checks (every story once, counts agree, tile rules) and the audit
 //
-// Each render writes beside its PNG: the HTML, the poster model (*-model.json), the page's audit (*-audit.json) and,
-// for the poster, a contrast table (*-contrast.csv). A render stops with an error, and writes no PNG, if any text box
-// overflows after shrinking, text overlaps text or a glyph, leaves the canvas, is under 13 px, misses its WCAG
-// contrast threshold, or a font is missing; or if the tile grid breaks its rules (render/grid.mjs: at most 12 tiles in
-// 4 columns and 3 rows, 226 px wide, every tile headline at 16 px or more on at most 2 lines, 18 px chips, 36 px
-// glyphs, everything inside its tile, coverage counts adding up to the stories shown). The poster render is strict: a
-// tile or secondary label that only fits as its fallback (the category name) stops it too, so the label_short gets
-// shortened. The PNG is then decoded with Pillow (render/png_check.py), which also
-// writes a 300x300 preview (out/entry-300.png for the poster).
-//
-// Needs Google Chrome or Chromium (CHROME=/path/to/chrome), Python 3 with Pillow (PYTHON=...), and the system fonts
-// Anton, Inter and IBM Plex Mono installed for Fontconfig.
+// A render stops, and writes no PNG, if text overflows, overlaps other text, leaves the canvas, is under 13 px, misses
+// its WCAG contrast threshold, a font is missing, or a tile headline is under 16 px or over 2 lines. The PNG is then
+// decoded with Pillow (render/png_check.py), which also writes out/entry-300.png. Needs Chrome/Chromium
+// (CHROME=...), Python 3 + Pillow (PYTHON=...), and system fonts Anton, Inter, IBM Plex Mono.
 
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
-import { buildPoster } from './render/poster.mjs';
-import { posterPage, glyphSheet } from './render/page.mjs';
-import { gridProblems } from './render/grid.mjs';
+import { buildModel, posterPage, TILES, LIST_MAX, label } from './render/v5.mjs';
 import { readReport, screenshot } from './render/chrome.mjs';
-import { fallbackCases } from './render/cases.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const out = join(here, 'out');
-const rel = (p) => relative(here, p);
 const python = process.env.PYTHON ?? 'python3';
+const data = () => JSON.parse(readFileSync(join(here, 'stories.json'), 'utf8'));
 
-function pngCheck(png, preview) {
-  const args = ['-I', join(here, 'render', 'png_check.py'), png];
-  if (preview) args.push(preview);
-  const res = JSON.parse(execFileSync(python, args, { encoding: 'utf8' }).trim());
-  if (!res.ok) throw new Error(`${rel(png)}: ${res.problems.join(', ')}`);
-  return res;
+function dataProblems(m, d) {
+  const p = [];
+  const shown = [m.lead, ...m.seconds, ...m.tiles, ...m.rest];
+  if (new Set(shown).size !== d.stories.length || shown.length !== d.stories.length) p.push('every story must be shown exactly once');
+  if (m.tiles.length !== TILES) p.push(`expected ${TILES} tiles, got ${m.tiles.length}`);
+  if (m.rest.length > LIST_MAX) p.push('list too long');
+  if (m.all.length < 26) p.push('fewer than 26 stories');
+  if (!m.header.count.startsWith(`${m.all.length} STORIES`)) p.push('header count disagrees with the data');
+  for (const s of d.stories) if (!d.regions[s.region]) p.push(`unknown region ${s.region}`);
+  for (const s of m.tiles) if (label(s).length > 48) p.push(`tile label too long: ${label(s)}`);
+  return p;
 }
 
-function renderPage(name, html, dir, { model, preview, grid } = {}) {
-  mkdirSync(dir, { recursive: true });
-  const htmlPath = join(dir, `${name}.html`);
-  const pngPath = join(dir, `${name}.png`);
-  writeFileSync(htmlPath, html);
-  if (model) writeFileSync(join(dir, `${name}-model.json`), `${JSON.stringify(model, null, 2)}\n`);
-  const report = readReport(htmlPath, 1024, 1024);
-  writeFileSync(join(dir, `${name}-audit.json`), `${JSON.stringify(report, null, 2)}\n`);
-  const csv = ['text,px,weight,fg,bg,ratio,need,pass',
-    ...report.contrast.map((c) => [JSON.stringify(c.text), c.px, c.weight, JSON.stringify(c.fg), JSON.stringify(c.bg), c.ratio, c.need, c.pass ? 'PASS' : 'FAIL'].join(','))];
-  writeFileSync(join(dir, `${name}-contrast.csv`), `${csv.join('\n')}\n`);
-  if (grid) report.bad.push(...gridProblems(model, report, grid));
-  if (report.bad.length) throw new Error(`${name}: ${report.bad.length} layout problem(s):\n  ${report.bad.join('\n  ')}`);
-  screenshot(htmlPath, 1024, 1024, pngPath);
-  const check = pngCheck(pngPath, preview);
-  console.log(`wrote ${rel(pngPath)}: ${check.width}x${check.height} ${check.mode}, ${check.bytes} bytes; `
-    + `min type ${report.minFont}px, min contrast ${report.minContrast}:1, fonts ${Object.entries(report.fonts).map(([f, ok]) => `${f} ${ok ? 'ok' : 'MISSING'}`).join(', ')}`
-    + (preview ? `; preview ${rel(preview)}` : ''));
-  for (const f of report.fits) if (f.how !== 'fit') console.log(`  note: ${f.name}: ${f.how} -> "${f.text}"`);
-  return { pngPath, report };
+function render() {
+  const d = data();
+  const m = buildModel(d);
+  const problems = dataProblems(m, d);
+  if (problems.length) throw new Error(`data problems:\n  ${problems.join('\n  ')}`);
+  mkdirSync(out, { recursive: true });
+  const html = join(out, 'final.html');
+  const png = join(out, 'final.png');
+  writeFileSync(html, posterPage(m));
+  const report = readReport(html, 1024, 1024);
+  writeFileSync(join(out, 'final-audit.json'), `${JSON.stringify(report, null, 2)}\n`);
+  const csv = ['text,px,fg,bg,ratio,need,pass', ...report.contrast.map((c) => [JSON.stringify(c.text), c.px, JSON.stringify(c.fg), JSON.stringify(c.bg), c.ratio, c.need, c.pass ? 'PASS' : 'FAIL'].join(','))];
+  writeFileSync(join(out, 'final-contrast.csv'), `${csv.join('\n')}\n`);
+  if (report.bad.length) throw new Error(`${report.bad.length} layout problem(s):\n  ${report.bad.join('\n  ')}`);
+  screenshot(html, 1024, 1024, png);
+  const res = JSON.parse(execFileSync(python, ['-I', join(here, 'render', 'png_check.py'), png, join(out, 'entry-300.png')], { encoding: 'utf8' }).trim());
+  if (!res.ok) throw new Error(res.problems.join(', '));
+  console.log(`wrote ${relative(here, png)}: ${res.width}x${res.height}, ${res.bytes} bytes; min type ${report.minFont}px, min contrast ${report.minContrast}:1; ${m.header.count}`);
+  console.log(`  lead + ${m.seconds.length} secondary + ${m.tiles.length} tiles + ${m.rest.length} listed = ${m.all.length}`);
+  return png;
 }
 
-function renderPoster() {
-  const data = JSON.parse(readFileSync(join(here, 'stories.json'), 'utf8'));
-  const poster = buildPoster(data);
-  const res = renderPage('final', posterPage(poster), out, { model: poster, preview: join(out, 'entry-300.png'), grid: { strict: true } });
-  const all = [poster.lead, ...poster.seconds, ...poster.tiles].filter(Boolean);
-  const drawn = new Map(res.report.tiles.map((t) => [t.n, t]));
-  console.log(`  ${poster.header.stat1} · ${poster.header.stat2}; coverage ${poster.coverage.map((c) => `${c.label} ${c.count}`).join(', ')}`);
-  console.log(`  grid ${res.report.grid.cols}x${res.report.grid.rows}, ${res.report.grid.tiles} tiles`);
-  for (const s of all) {
-    const t = drawn.get(s.n);
-    const tile = t ? `  [${t.px}px, ${t.lines} line${t.lines === 1 ? '' : 's'}, ${s.label.text.length} chars]` : '';
-    console.log(`  #${String(s.n).padEnd(2)} ${s.chip.padEnd(11)} ${s.glyph.padEnd(9)} ${s.label.text}${tile}`);
-  }
-  return res;
-}
-
-const args = process.argv.slice(2);
-const jobs = args.length ? args : ['final', 'glyphs'];
-for (const job of jobs) {
-  if (job === 'final') renderPoster();
+for (const job of process.argv.slice(2).length ? process.argv.slice(2) : ['final']) {
+  if (job === 'final' || job === 'tests') render();
   else if (job === 'entry') {
-    const { pngPath } = renderPoster();
-    copyFileSync(pngPath, join(here, 'entry.png'));
-    console.log(`copied ${rel(pngPath)} -> entry.png (${statSync(join(here, 'entry.png')).size} bytes)`);
-  } else if (job === 'glyphs') renderPage('glyphs', glyphSheet(), out);
-  else if (job === 'tests') {
-    const cases = fallbackCases(JSON.parse(readFileSync(join(here, 'stories.json'), 'utf8')));
-    for (const [what, test] of cases.unit) {
-      const ok = test();
-      console.log(`unit ${ok ? 'ok  ' : 'FAIL'} ${what}`);
-      if (!ok) process.exitCode = 1;
-    }
-    for (const c of cases) {
-      const poster = buildPoster(c.data);
-      console.log(`case ${c.name}: ${c.about}`);
-      const { report } = renderPage(c.name, posterPage(poster), join(out, 'tests'),
-        { model: poster, preview: join(out, 'tests', `${c.name}-300.png`), grid: { strict: c.strict === true } });
-      for (const expect of c.expect ?? []) {
-        const ok = expect.test(poster, report);
-        console.log(`  ${ok ? 'ok  ' : 'FAIL'} ${expect.what}`);
-        if (!ok) process.exitCode = 1;
-      }
-    }
-  } else {
-    console.error(`unknown job "${job}" (use entry, final, glyphs or tests)`);
-    process.exit(2);
-  }
+    copyFileSync(render(), join(here, 'entry.png'));
+    console.log(`copied to entry.png (${statSync(join(here, 'entry.png')).size} bytes)`);
+  } else { console.error(`unknown job "${job}" (entry, final, tests)`); process.exit(2); }
 }

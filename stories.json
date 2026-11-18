@@ -50,42 +50,42 @@
   },
   "regions": {
     "ASIA": {
-      "colour": "#d62828",
+      "colour": "#b3171d",
       "en": "ASIA",
       "zh": "亞洲"
     },
     "MIDEAST": {
-      "colour": "#e46a00",
+      "colour": "#a84300",
       "en": "MIDDLE EAST",
       "zh": "中東"
     },
     "EUROPE": {
-      "colour": "#0f8a6c",
+      "colour": "#0b6b55",
       "en": "EUROPE",
       "zh": "歐洲"
     },
     "AFRICA": {
-      "colour": "#b07a00",
+      "colour": "#7d5600",
       "en": "AFRICA",
       "zh": "非洲"
     },
     "AMERICAS": {
-      "colour": "#1d5fbf",
+      "colour": "#1a4f9f",
       "en": "AMERICAS",
       "zh": "美洲"
     },
     "OCEANIA": {
-      "colour": "#0a86b0",
+      "colour": "#00667f",
       "en": "OCEANIA",
       "zh": "大洋洲"
     },
     "SPACE": {
-      "colour": "#5b3fa8",
+      "colour": "#533a9c",
       "en": "SPACE",
       "zh": "太空"
     },
     "ONLINE": {
-      "colour": "#59606b",
+      "colour": "#4a515c",
       "en": "ONLINE",
       "zh": "網路"
     }

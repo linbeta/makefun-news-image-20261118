@@ -4,86 +4,37 @@
 [![rank](https://make.fun/badge/news-image-20261118/linbeta/makefun-news-image-20261118/rank.svg)](https://make.fun/bounty/news-image-20261118/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118)
 [![reward](https://make.fun/badge/news-image-20261118/linbeta/makefun-news-image-20261118/reward.svg)](https://make.fun/bounty/news-image-20261118?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118)
 
+## What the image is (v5)
 
-An entry for the make.fun bounty **Sum up 18 November's world news in one image**:
-<https://make.fun/bounty/news-image-20261118>
+One 1024x1024 picture of Wednesday 18 November 2026: **31 stories, 6 regions plus deep space and online, one day**,
+all drawn from `stories.json` (nothing is typed into the layout).
 
-![entry](entry.png)
+- **Header**: the date in large type, the weekday and a count line computed from the data.
+- **Lead**: the day's main story (Xi opens the APEC summit in Shenzhen) with a large headline and pictogram, and two
+  secondary leads (drone attacks on Kuwait and Bahrain; Cyclone Xavier on the Cook Islands).
+- **Day-sweep strip** (the layout's backbone): a UTC-offset axis from +12 to -10 with UTC+0 (London) dashed, city names
+  and offsets, and every story as a numbered dot in its time zone. Stories are numbered in time order (earliest UTC
+  first), so the numbers in the tiles and list read along the same axis. Deep space and online stories sit in a "no zone" box.
+- **4x3 icon tiles**: twelve stories, each with its number, region chip, category pictogram (render/glyphs.mjs) and a headline at 17 px.
+- **Also on 18 November**: the other sixteen stories, 14 px, one line each.
+- **Footer**: the sources the stories were checked against.
 
-**`entry.png` is the entry**: a 1024x1024 English PNG (about 186 KiB), a poster of fifteen stories from Wednesday
-18 November 2026:
-
-- **the date header**: `18 NOV 2026`, the weekday, and `15 STORIES · 6 REGIONS / ONE DAY`;
-- **the lead**: Xi opens the APEC summit in Shenzhen, with where it happened, the first sentence of the report and a
-  large pictogram;
-- **two secondary leads**: new drone attacks reported by Kuwait and Bahrain, and Cyclone Xavier in the Cook Islands;
-- **WORLD COVERAGE**: how many of the fifteen come from each region (ASIA 2, MIDDLE EAST 2, EUROPE 3, AFRICA 1,
-  AMERICAS 3, OCEANIA 2, SPACE 1, ONLINE 1). The bar has one coloured segment per region chip used on the poster, so the
-  chips and the bar always agree; the header's region count is the number of earthly segments in the bar (space and
-  online are shown but not counted);
-- **a 4x3 grid of twelve tiles**, each with a 36 px category pictogram in the region's colour, the region chip and a
-  headline of at most two lines: Nvidia results, Voyager 1 at one light-day, COP31 talks, the Board of Peace's Gaza
-  truce warning, the word of the year, Cricket Australia's "Sandpapergate" forum, a South Korean boat missing with 7
-  aboard, fighting in Kivu, Prince Harry in Ukraine, the Ecuadorian fishers' lawsuit, Peltola's Alaska Senate
-  win, and the crypto-theft attack on 170+ websites;
-- **a footer**: `Every story dated 18 Nov 2026` and the outlets the stories were checked against.
-
-Every story, with its region, place, time, a line of context and its sources, is in `stories.json`.
-
-## How the poster is made from the data
-
-Everything on the poster is computed from `stories.json`, so a new day needs only a new `stories.json`:
-
-- **Lead**: the story with `"lead": true`, else the first `hero`, else the first card or brief.
-- **Secondary leads**: up to two more heroes in list order, topped up with cards.
-- **Tiles**: up to twelve of the rest. Stories with `"pick": true` go first; the remaining places go, one at a time, to
-  the story that scores highest: 4 points for a region not yet on the poster, 2 for a news beat not yet on it, 1 for
-  being a card (ties go to the earlier story). A beat is a pictogram's category, except that the ballot box counts as
-  politics and the radio mast as tech, so a second picture of a beat already shown does not outscore a new beat. Tiles
-  are drawn in list order, four to a row.
-- **Tile grid**: 4 columns x 3 rows across the content width (x 36 to 988), columns 226 px wide with 16 px gutters, rows
-  98 px tall and 12 px apart. In each tile: the 36 px pictogram and the region chip (18 px) on top, then the headline,
-  17 px, shrinking to 16 px at the least, on at most two lines.
-- **Labels**: a story's `label_short` if it has one (at most 4 words for the lead, 8 elsewhere); otherwise the
-  headline if it has at most 4 (lead) or 6 words, or without a trailing "today"/"on Thursday"; otherwise its first words
-  and "…", except that a long headline carrying a claim, quote or question is replaced by its kicker category rather
-  than cut mid-claim. Tile labels are written to about 28 to 36 characters. Labels shrink to fit their box; one that
-  still does not fit at 16 px (two lines in a tile) becomes the category name in the fallback tests, and stops the
-  entry render, so the `label_short` gets shortened instead.
-- **Lead sub-line**: if the big label already holds at least 70% of the headline's content words, the poster shows the
-  place and the first full sentence of `en.line`; otherwise it shows the original headline.
-- **Pictograms**: an explicit `glyph` on the story, else the kicker's last section (`CONFLICT`, `LAW`, `SPORT`, ...),
-  else keywords in the headline, else the globe; then a broad match is narrowed by the headline: a politics story
-  about an election gets the ballot box, other politics the podium, and a tech story about mobile networks the radio
-  mast. Sixteen categories: storm (weather events only), climate, conflict, diplomacy, economy, science, health, tech,
-  election, politics, law, sport, culture, maritime, signal, world. `node render-entry.mjs glyphs` draws them all on
-  one sheet, large and at tile size.
-- **Header, coverage and footer**: the date and weekday come from `meta.date_iso` (en-GB, UTC); the counts come from the
-  fifteen stories actually drawn, and the coverage counts add up to that number; the sources line is `meta.en.sources_label` and `meta.sources_footer`, cut from the
-  end with "…" when it is too long.
-- **Fewer stories**: the poster draws what there is. With no stories it shows the date, `0 STORIES · 0 REGIONS` and
-  `NO STORIES`.
+Palette: cool grey-blue page (#eef1f5), navy ink, darker region colours (every chip and text passes WCAG AA, audited on
+each render). Type: Anton for the date and lead, Inter for text, IBM Plex Mono for chips. No type is under 13 px.
 
 ## Files
 
 - `main.ts`: the entry program (Node 22+, standard library only, no network). It checks `entry.png` (PNG signature,
-  every chunk's CRC, IHDR size at most 1024x1024, IDAT and IEND present, at most 1 MiB) and writes the same bytes to
-  `$MAKEFUN_OUTPUT_DIR/entry.png` (default `/output/entry.png`). It fails loudly if any check fails. Only `entry.png` is
-  read or written, so every run writes identical bytes.
+  every chunk's CRC, size at most 1024x1024, IDAT and IEND present, at most 1 MiB) and writes the same bytes to
+  `$MAKEFUN_OUTPUT_DIR/entry.png` (default `/output/entry.png`). Every run writes identical bytes.
 - `entry.png`: the committed entry image.
-- `stories.json`: **the data**. Its `_howto` field lists the fields the poster reads.
-- `render-entry.mjs`: the renderer's command line (development only; `main.ts` never runs it).
-- `render/poster.mjs`: selection, labels, coverage counts, header stats and the lead sub-line, computed from the data.
-- `render/glyphs.mjs`: the sixteen category pictograms (original SVG drawn for this entry), their beats and the rule
-  that picks one.
-- `render/page.mjs`: the poster and glyph-sheet layouts as HTML, plus the in-page script that fits each text box and
-  audits the page (overflow, overlap, canvas bounds, minimum type size, line counts, WCAG contrast, fonts present, panels
-  not overlapping, everything in a tile staying inside it).
-- `render/grid.mjs`: the tile grid's rules, checked on every render (at most 12 tiles in 4 columns and 3 rows, 226 px
-  wide, headlines at 16 px or more on at most two lines, 18 px chips, 36 px pictograms, coverage adding up).
-- `render/chrome.mjs`: headless Chrome helpers; `render/png_check.py`: Pillow decode check and 300 px preview;
-  `render/cases.mjs`: the test cases (the day's data rendered strictly, plus fallbacks) and unit checks.
-- `render/v2/` and `reference/`: the earlier design, see below.
+- `stories.json`: the data (31 stories, regions with colours, sources).
+- `render-entry.mjs`: command line of the renderer (development only; `main.ts` never runs it).
+- `render/v5.mjs`: the poster model (time order, tile and list selection, counts) and the HTML page with its in-page
+  audit (overflow, overlap, canvas bounds, 13 px minimum, WCAG contrast, fonts, tile headlines at 16 px or more on at most two lines).
+- `render/glyphs.mjs`: the category pictograms (original SVG) and the rule that picks one per story.
+- `render/chrome.mjs`, `render/png_check.py`: headless Chrome helpers; Pillow decode check and 300 px preview.
+- `render/v2/` and `reference/`: the earlier v2 reference design (31-story front page with drawn scenes), not the entry.
 
 ## Run
 
@@ -93,38 +44,18 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 ## Regenerate the image
 
-Requires Google Chrome or Chromium (`CHROME=/path/to/chrome` to choose), Python 3 with Pillow, and the system fonts
-Anton, Inter and IBM Plex Mono installed for Fontconfig (all SIL Open Font License 1.1; none is bundled here).
+Requires Google Chrome or Chromium (`CHROME=/path/to/chrome`), Python 3 with Pillow, and the system fonts Anton, Inter
+and IBM Plex Mono installed for Fontconfig (all SIL Open Font License 1.1; none is bundled).
 
 ```sh
-node render-entry.mjs entry    # render out/final.png, check it, copy it to entry.png
-node render-entry.mjs final    # render and check out/final.png only
-node render-entry.mjs glyphs   # out/glyphs.png, every pictogram
-node render-entry.mjs tests    # the day's data and fallback cases into out/tests/ (no stories, one brief, no hero,
-                               # long text, an over-long tile label, more picks than tiles, ...) and unit checks
+node render-entry.mjs entry    # render out/final.png, audit it, copy it to entry.png
+node render-entry.mjs final    # render and audit out/final.png only
+node render-entry.mjs tests    # data checks (each story shown once, counts agree) plus the audit
 ```
 
-A render stops, without writing the PNG, if any text overflows its box after shrinking, overlaps other text or a
-pictogram, leaves the canvas, is smaller than 13 px (only the sources line is under 16 px), falls below its WCAG
-contrast threshold, if a font is missing, or if the tile grid breaks a rule above (a tile headline under 16 px or on
-three lines, a chip not at 18 px, a tile outside the grid or overlapping another panel).
-Beside each PNG it writes the HTML, the poster model, the audit and a contrast table; `out/entry-300.png` is the
-300 px preview. After a render, look at `entry.png` at full size and at 300 px, then run `main.ts` again.
-
-## Reference images (earlier design, not the entry)
-
-`reference/zh-tw.png` (1024x1024, Traditional Chinese) and `reference/bilingual-portrait.png` (1080 wide, English then
-Traditional Chinese) are references from the earlier v2 design: a 31-story front page with drawn scenes and a
-day-sweep strip. They are not submitted, `main.ts` never reads them, and they do not follow the poster above. Their
-renderer is kept in `render/v2/`:
-
-```sh
-node render/v2/render-reference.mjs                      # into out/v2/ (the committed PNGs are left alone)
-node render/v2/render-reference.mjs --update-reference   # also overwrite reference/*.png
-```
-
-It reads the v2 fields of `stories.json` (`tier`, `utc_offset`, `icon`, `zh`) and needs the system fonts Oswald,
-Inter, Inter Tight, Noto Serif and Noto Sans CJK TC.
+A render stops, without writing a PNG, on any text overflow or overlap, text off the canvas, type under 13 px, contrast
+below WCAG AA, a missing font, or a tile headline under 16 px / over two lines. It writes the HTML, the audit and a
+contrast table beside the PNG, plus `out/entry-300.png`, the 300 px preview.
 
 ## Licence
 
