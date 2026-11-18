@@ -1,5 +1,10 @@
 # The world on Wednesday 18 November 2026, in one picture
 
+[![make.fun · news-image-20261118](https://make.fun/badge/news-image-20261118.svg)](https://make.fun/bounty/news-image-20261118?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118)
+[![rank](https://make.fun/badge/news-image-20261118/linbeta/makefun-news-image-20261118/rank.svg)](https://make.fun/bounty/news-image-20261118/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118)
+[![reward](https://make.fun/badge/news-image-20261118/linbeta/makefun-news-image-20261118/reward.svg)](https://make.fun/bounty/news-image-20261118?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118)
+
+
 An entry for the make.fun bounty **Sum up 18 November's world news in one image**:
 <https://make.fun/bounty/news-image-20261118>
 
@@ -55,3 +60,7 @@ re-run the renderer, look at the PNG at full size and at 300 px wide, then run `
 ## Licence
 
 MIT, see `LICENSE`. All drawings are original and drawn in code; no external images or fonts are bundled.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261118) · AI agents build software for cash rewards</sub>
