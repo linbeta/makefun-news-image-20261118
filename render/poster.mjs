@@ -3,16 +3,17 @@
 //
 //   buildPoster(data) -> { date, header, lead, seconds, tiles, coverage, footer, empty }
 //
-// Selection (see README "How the 12 are chosen"):
+// Selection (see README "How the poster is made from the data"): 15 stories at most.
 //   lead     first story with lead === true, else the first hero, card, brief, else the first story
 //   seconds  up to 2 remaining heroes in data order, topped up with cards in data order
-//   tiles    up to 9 of the rest: stories with pick === true first (data order), then a greedy fill that scores each
-//            candidate 4 for a coverage segment not yet shown, 2 for a glyph not yet shown and 1 for being a card
-//            (or a spare hero); ties go to data order. Tiles are drawn in data order.
+//   tiles    up to 12 of the rest: stories with pick === true first (data order), then a greedy fill that scores each
+//            candidate 4 for a coverage segment not yet shown, 2 for a news beat not yet shown (glyphs.mjs beatOf:
+//            the ballot box counts as politics, the radio mast as tech) and 1 for being a card (or a spare hero);
+//            ties go to data order. Tiles are drawn in data order, 4 to a row.
 
-import { glyphFor, GLYPHS, kickerWord } from './glyphs.mjs';
+import { glyphFor, GLYPHS, kickerWord, beatOf } from './glyphs.mjs';
 
-export const MAX_TILES = 9;
+export const MAX_TILES = 12;
 export const MAX_SECONDS = 2;
 
 // Region chips and coverage segments. The coverage bar has exactly one segment per chip name, so the chips and the
@@ -129,13 +130,13 @@ export function select(list) {
   seconds.forEach((s) => used.add(s));
 
   const seenSeg = new Set([lead, ...seconds].map((s) => s.segment));
-  const seenGlyph = new Set([lead, ...seconds].map((s) => s.glyph));
+  const seenBeat = new Set([lead, ...seconds].map((s) => beatOf(s.glyph)));
   const chosen = [];
-  const take = (s) => { chosen.push(s); used.add(s); seenSeg.add(s.segment); seenGlyph.add(s.glyph); };
+  const take = (s) => { chosen.push(s); used.add(s); seenSeg.add(s.segment); seenBeat.add(beatOf(s.glyph)); };
 
   for (const s of rest()) if (s.pick === true && chosen.length < MAX_TILES) take(s);
   const score = (s) => (s.segment !== 'OTHER' && !seenSeg.has(s.segment) ? 4 : 0)
-    + (!seenGlyph.has(s.glyph) ? 2 : 0) + (s.tier === 'card' || s.tier === 'hero' ? 1 : 0);
+    + (!seenBeat.has(beatOf(s.glyph)) ? 2 : 0) + (s.tier === 'card' || s.tier === 'hero' ? 1 : 0);
   while (chosen.length < MAX_TILES) {
     let best = null;
     let bestScore = -1;

@@ -4,8 +4,10 @@
 // Every variable text box carries data-fit: a script in the page shrinks its type 1 px at a time down to a floor, then
 // (per box) cuts it at a whole word with "…", swaps in a fallback label, or empties it. After that it audits the page:
 // text outside its box or the canvas, text boxes overlapping each other or a glyph, type under 13 px, WCAG contrast of
-// every text run against the colour behind it, and whether the three system fonts were really used. The result is
-// written as JSON into <script id="report">, which render-entry.mjs reads back and fails on.
+// every text run against the colour behind it, and whether the three system fonts were really used; then, for the tile
+// grid, lines per box (data-maxlines), type under a box's floor (data-floor), chip size, panels overlapping, and
+// anything leaving its tile (data-in), with one row per tile in report.tiles. The result is written as JSON into
+// <script id="report">, which render-entry.mjs reads back and fails on (adding the rules in render/grid.mjs).
 //
 // Fonts are the system TTFs Fontconfig provides (Anton, Inter, IBM Plex Mono): nothing is embedded or bundled.
 
@@ -50,12 +52,14 @@ body { position: relative; color: ${C.text}; font: 600 20px/24px 'Inter', sans-s
 
 // A text box: absolutely placed frame (x, y, w, h) holding one text element that the fit script sizes.
 // opts: size (start px), min (floor px), lh (line-height factor, or px when lhPx), mode ('shrink' | 'cut' | 'fallback' |
-// 'clear'), fallback (text), cls/style extra, nowrap, valign.
+// 'clear'), fallback (text), cls/style extra, nowrap, valign; for the audit: maxLines (most lines allowed), floor (least
+// px allowed), inTile (id of the tile panel the box must stay inside).
 function fitBox(text, x, y, w, h, o) {
   const lh = o.lhPx ? `${o.lhPx}px` : String(o.lh);
   const data = `data-fit="${o.mode ?? 'shrink'}" data-size="${o.size}" data-min="${o.min}" data-lh="${o.lhPx ? `${o.lhPx}px` : o.lh}"`
-    + (o.fallback ? ` data-fallback="${esc(o.fallback)}"` : '') + (o.name ? ` data-name="${esc(o.name)}"` : '');
-  return `<div class="abs vbox box" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${o.valign === 'top' ? 'align-items:flex-start;' : ''}">`
+    + (o.fallback ? ` data-fallback="${esc(o.fallback)}"` : '') + (o.name ? ` data-name="${esc(o.name)}"` : '')
+    + (o.maxLines ? ` data-maxlines="${o.maxLines}"` : '') + (o.floor ? ` data-floor="${o.floor}"` : '');
+  return `<div class="abs vbox box"${o.inTile ? ` data-in="${o.inTile}"` : ''} style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${o.valign === 'top' ? 'align-items:flex-start;' : ''}">`
     + `<div class="t ${o.cls ?? ''}${o.nowrap ? ' nowrap' : ''}" ${data} style="font-size:${o.size}px;line-height:${lh};${o.style ?? ''}">${esc(text)}</div></div>`;
 }
 
@@ -144,20 +148,37 @@ function coverage(p) {
     + segs;
 }
 
+// Tile grid: 4 columns x 3 rows across the content width (x 36..988), columns 226 wide with 16 px gutters, rows 98
+// tall and 12 apart (v3's rows). Inside a tile (4 px region rule on the left, 10 px padding): a top row with the 36 px
+// category glyph and the region chip (Mono 18 px), then the headline, Inter 750 from 17 px down to a floor of 16 px,
+// on at most 2 lines. A headline that does not fit at 16 px in 2 lines falls back to the glyph's name; the entry
+// render refuses that (render-entry.mjs), so the label_short in stories.json has to be shortened instead.
+export const GRID = (() => {
+  const cols = 4; const rows = 3; const gutter = 16;
+  const colW = (CW - gutter * (cols - 1)) / cols; // 226
+  const rule = 4; const padX = 10; const padY = 9;
+  const glyph = 36; const glyphGap = 8; const headGap = 4;
+  const head = { size: 17, min: 16, lh: 1.12, lines: 2 };
+  const headH = Math.ceil(head.size * head.lh * head.lines); // 39: 2 lines at 17 px, never 3 at 16 px (53.8)
+  return { cols, rows, max: cols * rows, gutter, colW, rowH: Y.rowH, rowGap: Y.gap, rule, padX, padY, glyph, glyphGap, headGap, head, headH,
+    innerW: colW - rule - 2 * padX }; // 202
+})();
+
 function strip(p) {
-  const colW = (CW - 24) / 3;
-  return p.tiles.map((s, i) => {
-    const x = M + (i % 3) * (colW + 12);
-    const y = Y.strip + Math.floor(i / 3) * (Y.rowH + Y.gap);
-    const iconW = 62;
-    const textX = x + 4 + 10 + iconW + 10;
-    const textW = colW - 4 - 20 - iconW - 10;
-    return `<div class="abs panel" style="left:${x}px;top:${y}px;width:${colW}px;height:${Y.rowH}px;border-left:4px solid ${s.colour};border-radius:8px"></div>`
-      + `<div class="abs" style="left:${x + 14}px;top:${y}px;width:${iconW}px;height:${Y.rowH}px;display:flex;align-items:center;justify-content:center;color:${s.colour}">${glyphSvg(s.glyph, 54)}</div>`
-      + `<div class="abs" style="left:${textX}px;top:${y + 8}px">${chip(s)}</div>`
-      + fitBox(s.label.text, textX, y + 8 + 28 + 4, textW, 46, {
-        size: 21, min: 16, lh: 1.12, mode: 'fallback', fallback: s.fallback, name: `tile ${s.n}`,
-        style: 'font-weight:750;letter-spacing:-.02em',
+  const G = GRID;
+  return p.tiles.slice(0, G.max).map((s, i) => {
+    const x = M + (i % G.cols) * (G.colW + G.gutter);
+    const y = Y.strip + Math.floor(i / G.cols) * (G.rowH + G.rowGap);
+    const id = `tile-${i}`;
+    const innerX = x + G.rule + G.padX;
+    const topY = y + G.padY;
+    const headY = topY + G.glyph + G.headGap;
+    return `<div class="abs panel tile" id="${id}" data-n="${s.n}" style="left:${x}px;top:${y}px;width:${G.colW}px;height:${G.rowH}px;border-left:${G.rule}px solid ${s.colour};border-radius:8px"></div>`
+      + `<div class="abs" data-in="${id}" style="left:${innerX}px;top:${topY}px;width:${G.glyph}px;height:${G.glyph}px;color:${s.colour}">${glyphSvg(s.glyph, G.glyph)}</div>`
+      + `<div class="abs" data-in="${id}" data-chip="18" style="left:${innerX + G.glyph + G.glyphGap}px;top:${topY + (G.glyph - 28) / 2}px">${chip(s)}</div>`
+      + fitBox(s.label.text, innerX, headY, G.innerW, G.headH, {
+        size: G.head.size, min: G.head.min, lh: G.head.lh, mode: 'fallback', fallback: s.fallback, name: `tile ${s.n}`,
+        valign: 'top', style: 'font-weight:750;letter-spacing:-.02em;text-wrap:balance', maxLines: G.head.lines, floor: G.head.min, inTile: id,
       });
   }).join('');
 }
@@ -169,7 +190,7 @@ function footer(p) {
     ? `<div class="t nowrap" id="sources" data-label="${esc(f.sourcesLabel)}" data-items="${esc(JSON.stringify(f.sources))}" `
       + `style="font-size:13px;line-height:18px;color:${C.text2};width:${CW}px;overflow:hidden"></div>`
     : '';
-  return `<div class="abs" style="left:${M}px;top:${Y.footer}px;width:${CW}px;border-top:1px solid ${C.rule};padding-top:7px">${dated}${src}</div>`;
+  return `<div class="abs" id="footer" style="left:${M}px;top:${Y.footer}px;width:${CW}px;border-top:1px solid ${C.rule};padding-top:7px">${dated}${src}</div>`;
 }
 
 // ---- the in-page fit + audit script (runs in Chrome) ----
@@ -315,6 +336,59 @@ const PAGE_SCRIPT = String.raw`
   }
   if (report.overlaps.length) report.bad.push('overlapping text: ' + report.overlaps.join('; '));
 
+  // Lines a text run occupies: distinct line tops among its Range's client rects.
+  const lineCount = (el) => {
+    const r = document.createRange(); r.selectNodeContents(el);
+    const tops = [...r.getClientRects()].filter((q) => q.width > 0.5).map((q) => Math.round(q.top));
+    return new Set(tops).size;
+  };
+  for (const el of document.querySelectorAll('[data-maxlines]')) {
+    if (!el.textContent.trim()) continue;
+    const n = lineCount(el); const max = +el.dataset.maxlines;
+    if (n > max) report.bad.push((el.dataset.name || 'text') + ': ' + n + ' lines > ' + max);
+  }
+  for (const el of document.querySelectorAll('[data-floor]')) {
+    const px = parseFloat(getComputedStyle(el).fontSize);
+    if (el.textContent.trim() && px < +el.dataset.floor) report.bad.push((el.dataset.name || 'text') + ': ' + px + ' px < floor ' + el.dataset.floor);
+  }
+  for (const el of document.querySelectorAll('[data-chip] .chip')) {
+    const px = parseFloat(getComputedStyle(el).fontSize);
+    if (px !== +el.parentElement.dataset.chip) report.bad.push('chip ' + el.textContent + ': ' + px + ' px, not ' + el.parentElement.dataset.chip);
+  }
+
+  // Panels (lead, secondaries, tiles) must not overlap one another, and tiles stay in the content width (36..988) and
+  // above the footer rule. Everything tagged data-in="tile-i" (glyph, chip, headline) stays inside its tile.
+  const panelRects = [...document.querySelectorAll('.panel')].map((el) => ({ el, r: el.getBoundingClientRect() }));
+  for (let i = 0; i < panelRects.length; i++) for (let j = i + 1; j < panelRects.length; j++) {
+    if (hit(panelRects[i].r, panelRects[j].r)) report.bad.push('panels overlap: ' + (panelRects[i].el.id || 'panel ' + i) + ' / ' + (panelRects[j].el.id || 'panel ' + j));
+  }
+  const footerEl = document.getElementById('footer');
+  const footerTop = footerEl ? footerEl.getBoundingClientRect().top : 1024;
+  const inside = (a, b) => a.left >= b.left - 0.5 && a.right <= b.right + 0.5 && a.top >= b.top - 0.5 && a.bottom <= b.bottom + 0.5;
+  report.tiles = [];
+  for (const tile of document.querySelectorAll('.tile')) {
+    const tr = tile.getBoundingClientRect();
+    if (tr.left < 36 - 0.5 || tr.right > 988 + 0.5) report.bad.push(tile.id + ': outside the content width');
+    if (tr.bottom > footerTop - 4) report.bad.push(tile.id + ': runs into the footer');
+    const parts = [...document.querySelectorAll('[data-in="' + tile.id + '"]')];
+    for (const part of parts) {
+      const t = part.querySelector('.t');
+      const g = part.querySelector('svg.glyph');
+      const r = t ? rectOf(t) : (g || part).getBoundingClientRect();
+      if (!inside(r, tr)) report.bad.push(tile.id + ': ' + (t ? (t.dataset.name || 'chip ' + t.textContent) : 'glyph') + ' leaves the tile');
+    }
+    const head = parts.map((q) => q.querySelector('[data-maxlines]')).find(Boolean);
+    const chipEl = parts.map((q) => q.querySelector('.chip')).find(Boolean);
+    const glyphEl = parts.map((q) => q.querySelector('svg.glyph')).find(Boolean);
+    report.tiles.push({
+      id: tile.id, n: +tile.dataset.n, x: Math.round(tr.left), y: Math.round(tr.top), w: Math.round(tr.width), h: Math.round(tr.height),
+      text: head ? head.textContent : '', px: head ? parseFloat(getComputedStyle(head).fontSize) : 0, lines: head ? lineCount(head) : 0,
+      chip: chipEl ? chipEl.textContent : '', chipPx: chipEl ? parseFloat(getComputedStyle(chipEl).fontSize) : 0,
+      glyphPx: glyphEl ? Math.round(glyphEl.getBoundingClientRect().width) : 0,
+    });
+  }
+  report.grid = { tiles: report.tiles.length, cols: new Set(report.tiles.map((t) => t.x)).size, rows: new Set(report.tiles.map((t) => t.y)).size };
+
   // Fonts: a family that is missing falls back, so text in it measures the same as in the fallback.
   const probe = (family, weight) => {
     const c = document.createElement('canvas').getContext('2d');
@@ -344,17 +418,20 @@ export function posterPage(p) {
 }
 
 export function glyphSheet() {
-  const colW = (CW - 24) / 3;
+  // 4 columns like the tile grid; each cell shows the glyph large (88 px, lime) and at tile size (36 px, white).
+  const cols = 4; const gap = 12; const cellH = 196;
+  const colW = (CW - gap * (cols - 1)) / cols;
   const cells = GLYPH_ORDER.map((key, i) => {
     const g = GLYPHS[key];
-    const x = M + (i % 3) * (colW + 12);
-    const y = 137 + Math.floor(i / 3) * (196 + 12);
-    return `<div class="abs panel" style="left:${x}px;top:${y}px;width:${colW}px;height:196px;border-radius:8px;padding:10px;`
-      + `display:flex;flex-direction:column;align-items:center">`
-      + `<div style="color:${C.lime};margin-top:10px">${glyphSvg(key, 96)}</div>`
-      + `<div class="mono t" style="margin-top:9px;font-size:24px;line-height:30px">${esc(g.name.toUpperCase())}</div>`
-      + `<div class="t" style="font-size:17px;line-height:22px;color:${C.text2}">${esc(g.note)}</div></div>`;
+    const x = M + (i % cols) * (colW + gap);
+    const y = 124 + Math.floor(i / cols) * (cellH + gap);
+    return `<div class="abs panel" style="left:${x}px;top:${y}px;width:${colW}px;height:${cellH}px;border-radius:8px"></div>`
+      + `<div class="abs" style="left:${x + (colW - 88) / 2}px;top:${y + 12}px;color:${C.lime}">${glyphSvg(key, 88)}</div>`
+      + `<div class="abs" style="left:${x + colW - 46}px;top:${y + 10}px;color:${C.text}">${glyphSvg(key, 36)}</div>`
+      + `<div class="abs mono t nowrap" style="left:${x}px;top:${y + 108}px;width:${colW}px;text-align:center;font-size:22px;line-height:28px">${esc(g.name.toUpperCase())}</div>`
+      + `<div class="abs t" style="left:${x + 10}px;top:${y + 138}px;width:${colW - 20}px;text-align:center;font-size:16px;line-height:21px;color:${C.text2}">${esc(g.note)}</div>`;
   }).join('');
-  const title = `<div class="abs anton t nowrap" style="left:${M}px;top:32px;font-size:66px;line-height:79.2px;color:${C.lime}">NEWS GLYPHS</div>`;
+  const title = `<div class="abs anton t nowrap" style="left:${M}px;top:24px;font-size:66px;line-height:79.2px;color:${C.lime}">NEWS GLYPHS</div>`
+    + `<div class="abs t nowrap" style="right:${M}px;top:58px;font-size:18px;line-height:24px;color:${C.text2};text-align:right">${GLYPH_ORDER.length} category pictograms · 88 px and tile size 36 px</div>`;
   return shell('News glyphs', title + cells);
 }

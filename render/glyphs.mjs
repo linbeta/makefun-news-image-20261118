@@ -2,6 +2,10 @@
 //
 // Every glyph is drawn on an 80x80 grid as stroked outlines (no fill, round caps and joins, stroke width 5), so one
 // <svg> wrapper can draw any of them at any size in any colour (stroke = currentColor).
+//
+// A glyph's beat is the news beat it belongs to (its own key unless "beat" says otherwise): election is a picture of
+// the politics beat and signal one of the tech beat. Tile selection rewards a new beat, not a new picture of a beat
+// already on the poster.
 
 export const GLYPHS = {
   storm: {
@@ -43,17 +47,40 @@ export const GLYPHS = {
     name: 'Tech', note: 'Technology / online / cyber',
     body: '<rect x="20" y="20" width="40" height="40" rx="7"/><rect x="31" y="31" width="18" height="18" rx="3"/><path d="M30 8v12M40 8v12M50 8v12M30 60v12M40 60v12M50 60v12M8 30h12M8 40h12M8 50h12M60 30h12M60 40h12M60 50h12"/>',
   },
-  politics: {
-    name: 'Politics', note: 'Politics / elections',
+  election: {
+    name: 'Election', note: 'Elections / votes / results', beat: 'politics',
+    // a ballot box with a ticked paper going in: only for elections, never for politics in general
     body: '<path d="M27 42V12h26v30M34 26l5 5 8-9M12 42h56v26H12ZM12 50h56"/>',
+  },
+  politics: {
+    name: 'Politics', note: 'Government / parliament',
+    // a speaker's podium with a microphone
+    body: '<path d="M14 36h52l-7 32H21ZM18 46h44M12 68h56M40 36V23"/><circle cx="40" cy="16" r="6"/>',
   },
   law: {
     name: 'Law', note: 'Courts / lawsuits / justice',
     body: '<path d="M40 12v52M27 67h26M13 21h54M13 21 6 44M13 21l7 23M67 21l-7 23M67 21l7 23M4 44h18a9 9 0 0 1-18 0ZM58 44h18a9 9 0 0 1-18 0Z"/><circle cx="40" cy="11" r="2.5"/>',
   },
+  sport: {
+    name: 'Sport', note: 'Sport / games / stadiums',
+    // a cricket bat (blade and handle, tilted) and a ball
+    body: '<g transform="rotate(40 38 40)"><path d="M29 8h18v34l-5 5h-8l-5-5ZM38 47v21"/></g>'
+      + '<circle cx="61" cy="63" r="9"/>',
+  },
   culture: {
-    name: 'Culture', note: 'Culture / sport / language',
+    name: 'Culture', note: 'Culture / language / arts',
     body: '<path d="M26 12h28v20a14 14 0 0 1-28 0ZM26 18H15v5a11 11 0 0 0 11 11M54 18h11v5a11 11 0 0 1-11 11M40 46v14M28 67h24M33 60h14"/>',
+  },
+  maritime: {
+    name: 'Maritime', note: 'Boats / ships / sea rescues',
+    // a fishing boat (hull, wheelhouse, mast) riding a wave line
+    body: '<path d="M10 46h60l-9 15H19ZM26 46V33h17v13M55 46V14M55 18l-13 13M6 70c6-5 11-5 17 0s11 5 17 0 11-5 17 0 11 5 17 0"/>',
+  },
+  signal: {
+    name: 'Signal', note: 'Telecoms / mobile networks', beat: 'tech',
+    // a radio mast with waves going out both ways
+    body: '<path d="M40 36 30 70M40 36l10 34M33 58h14M31.5 21.5a12 12 0 0 0 0 17M48.5 21.5a12 12 0 0 1 0 17'
+      + 'M24.4 14.4a22 22 0 0 0 0 31.2M55.6 14.4a22 22 0 0 1 0 31.2"/><circle cx="40" cy="30" r="3.5"/>',
   },
   world: {
     name: 'World', note: 'General news',
@@ -62,6 +89,8 @@ export const GLYPHS = {
 };
 
 export const GLYPH_ORDER = Object.keys(GLYPHS);
+
+export const beatOf = (key) => GLYPHS[key]?.beat ?? key;
 
 export function glyphSvg(key, size, cls = '') {
   const g = GLYPHS[key] ?? GLYPHS.world;
@@ -76,8 +105,12 @@ export function glyphSvg(key, size, cls = '') {
 //    A kicker word mapped to null is an umbrella (DISASTER, SECURITY, PEOPLE, ...): it says too little on its own.
 // 3. Otherwise (unknown or umbrella kicker) the headline is scanned for the keywords below, in table order.
 // 4. Otherwise the umbrella's own default, else world.
+// 5. A broad glyph found in step 2 or 3 is then narrowed by the headline (REFINE): a POLITICS story about an election
+//    result gets the ballot box (election), any other politics story the podium; a TECH story about mobile networks
+//    gets the radio mast (signal).
 // The storm glyph is a cyclone: it is only used for weather events (a storm word in the headline, or a STORM/WEATHER
-// kicker). Climate policy gets climate, accidents with no storm word get world, lawsuits get law.
+// kicker). Climate policy gets climate, accidents with no storm word get world (boats and ships get maritime),
+// lawsuits get law, sport gets the bat and ball, culture the trophy.
 
 const KICKER = {
   STORM: 'storm', WEATHER: 'storm', CYCLONE: 'storm', HURRICANE: 'storm', TYPHOON: 'storm',
@@ -88,27 +121,40 @@ const KICKER = {
   SCIENCE: 'science', SPACE: 'science', SKY: 'science',
   HEALTH: 'health', MEDICINE: 'health',
   TECH: 'tech', TECHNOLOGY: 'tech', CYBER: 'tech', ONLINE: 'tech', AI: 'tech',
-  POLITICS: 'politics', ELECTION: 'politics', ELECTIONS: 'politics',
+  TELECOM: 'signal', TELECOMS: 'signal',
+  POLITICS: 'politics', GOVERNMENT: 'politics', PARLIAMENT: 'politics',
+  ELECTION: 'election', ELECTIONS: 'election', VOTE: 'election',
   LAW: 'law', COURTS: 'law', COURT: 'law', JUSTICE: 'law', CRIME: 'law',
-  SPORT: 'culture', SPORTS: 'culture', CULTURE: 'culture', LANGUAGE: 'culture', ARTS: 'culture',
+  SPORT: 'sport', SPORTS: 'sport',
+  CULTURE: 'culture', LANGUAGE: 'culture', ARTS: 'culture',
+  MARITIME: 'maritime', SEA: 'maritime',
   // umbrellas: scan the headline, then fall back to the value in UMBRELLA_DEFAULT
   DISASTER: null, ACCIDENT: null, SECURITY: null, PEOPLE: null, WORLD: null, NEWS: null,
 };
 const UMBRELLA_DEFAULT = { DISASTER: 'world', ACCIDENT: 'world', SECURITY: 'world', PEOPLE: 'world' };
 
+const ELECTION = /\b(elections?|elected|ballots?|votes?|voted|voters?|voting|polls|referendum|run-?off|wins .*\b(seat|race|election|vote|presidency))\b/i;
+const SIGNAL = /\b(6g|5g|4g|telecoms?|mobile networks?|cell(ular)? networks?|broadband|satellite internet)\b/i;
+
 const HEADLINE = [
   ['storm', /\b(cyclone|hurricane|typhoon|tornado|storm|floods?|flooding|blizzard)\b/i],
   ['conflict', /\b(fighting|drone attacks?|missiles?|troops|air ?strikes?|shelling|clashes|war)\b/i],
   ['law', /\b(sues?|sued|lawsuit|court|trial|verdict|ruling|judge|indicted|convicted)\b/i],
+  ['maritime', /\b(boats?|ships?|vessels?|ferry|ferries|capsiz\w*|shipwreck|sank|sinks?|coast ?guard|aboard)\b/i],
   ['diplomacy', /\b(summit|sanctions?|truce|ceasefire|peace talks|pact|treaty)\b/i],
   ['economy', /\b(markets?|forecasts?|stocks?|inflation|fintech|tariffs?|earnings)\b/i],
   ['science', /\b(voyager|meteors?|spacecraft|orbit|telescope|rocket|nasa)\b/i],
   ['health', /\b(hospitals?|vaccines?|outbreak|health|virus|disease)\b/i],
-  ['tech', /\b(cyber[a-z]*|outage|network|6g|websites?|software|hack(ed|ers?)?)\b/i],
-  ['politics', /\b(elections?|senate|ballot|parliament|vote|votes|wins .* seat)\b/i],
+  ['signal', SIGNAL],
+  ['tech', /\b(cyber[a-z]*|outage|network|websites?|software|hack(ed|ers?)?)\b/i],
+  ['election', ELECTION],
+  ['politics', /\b(senate|parliament|cabinet|coalition|impeach\w*|prime minister)\b/i],
   ['climate', /\b(climate|emissions|drought|heatwave|cop\d+)\b/i],
-  ['culture', /\b(cricket|olympics?|olympic|stadium|dictionary|museum|festival|film)\b/i],
+  ['sport', /\b(cricket|olympics?|olympic|stadium|football|soccer|rugby|tennis|world cup|marathon)\b/i],
+  ['culture', /\b(dictionary|museum|festival|film|novel|album|word of the year)\b/i],
 ];
+
+const REFINE = { politics: [['election', ELECTION]], tech: [['signal', SIGNAL]] };
 
 export function kickerWord(story) {
   const k = String(story.en?.kicker ?? '');
@@ -118,9 +164,10 @@ export function kickerWord(story) {
 
 export function glyphFor(story) {
   if (story.glyph && GLYPHS[story.glyph]) return story.glyph;
-  const word = kickerWord(story);
-  if (word && KICKER[word]) return KICKER[word];
   const headline = String(story.en?.headline ?? '');
-  for (const [key, re] of HEADLINE) if (re.test(headline)) return key;
+  const refine = (key) => (REFINE[key] ?? []).find(([, re]) => re.test(headline))?.[0] ?? key;
+  const word = kickerWord(story);
+  if (word && KICKER[word]) return refine(KICKER[word]);
+  for (const [key, re] of HEADLINE) if (re.test(headline)) return refine(key);
   return UMBRELLA_DEFAULT[word] ?? 'world';
 }

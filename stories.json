@@ -1,5 +1,5 @@
 {
-  "_howto": "Every story appears once; its position in this list is its number. The poster (render-entry.mjs) shows 12: the lead (the story with \"lead\": true, else the first hero), up to 2 more heroes as secondary leads, and 9 tiles chosen from the rest (stories with \"pick\": true first, then the ones that add a region or a category not yet shown, cards before briefs); tiles keep this list order. Optional per story: \"label_short\" (the label printed on the poster: at most 4 words for the lead, 8 for the others; otherwise the headline, or its first words, is used) and \"glyph\" (force a pictogram: storm, climate, conflict, diplomacy, economy, science, health, tech, politics, law, culture, world; otherwise it follows the kicker after its last \"·\", then the headline). region must be a key of regions; its chip name is regions[region].en and every chip name gets its own segment in the coverage bar. meta.date_iso dates the poster; meta.sources_footer and meta.en.sources_label make its sources line. The tier, utc_offset, icon and zh fields also feed the earlier v2 reference renderer (render/v2/). Re-render with: node render-entry.mjs entry",
+  "_howto": "Every story appears once; its position in this list is its number. The poster (render-entry.mjs) shows 15: the lead (the story with \"lead\": true, else the first hero), up to 2 more heroes as secondary leads, and 12 tiles in a 4x3 grid chosen from the rest (stories with \"pick\": true first, then the ones that add a region or a news beat not yet shown, cards before briefs); tiles keep this list order. Optional per story: \"label_short\" (the label printed on the poster: at most 4 words for the lead, 8 for the others; a tile label must fit 2 lines at 16-17 px, about 28-36 characters; otherwise the headline, or its first words, is used) and \"glyph\" (force a pictogram: storm, climate, conflict, diplomacy, economy, science, health, tech, election, politics, law, sport, culture, maritime, signal, world; otherwise it follows the kicker after its last \"·\", then the headline). region must be a key of regions; its chip name is regions[region].en and every chip name gets its own segment in the coverage bar. meta.date_iso dates the poster; meta.sources_footer and meta.en.sources_label make its sources line. The tier, utc_offset, icon and zh fields also feed the earlier v2 reference renderer (render/v2/). Re-render with: node render-entry.mjs entry",
   "meta": {
     "date_iso": "2026-11-18",
     "en": {
@@ -192,6 +192,7 @@
     {
       "id": "voyager",
       "tier": "card",
+      "label_short": "Voyager 1 reaches one light-day",
       "region": "SPACE",
       "icon": "voyager",
       "place": "Deep space",
@@ -215,6 +216,7 @@
     {
       "id": "cop31",
       "tier": "card",
+      "label_short": "COP31 draft deal splits talks",
       "region": "EUROPE",
       "icon": "climate",
       "place": "Antalya, Türkiye",
@@ -238,7 +240,7 @@
       "id": "gaza",
       "tier": "card",
       "pick": true,
-      "label_short": "Gaza truce at risk, Board of Peace warns",
+      "label_short": "Board of Peace: Gaza truce at risk",
       "region": "MIDEAST",
       "icon": "dove",
       "place": "Gaza / UN Security Council",
@@ -432,6 +434,7 @@
     {
       "id": "boat",
       "tier": "brief",
+      "label_short": "S. Korea: boat with 7 aboard missing",
       "region": "ASIA",
       "place": "South Korea",
       "utc_offset": 9,
@@ -704,6 +707,7 @@
     {
       "id": "alaska",
       "tier": "brief",
+      "label_short": "Peltola wins Alaska Senate seat",
       "region": "AMERICAS",
       "place": "Alaska, USA",
       "utc_offset": -9,
@@ -724,7 +728,7 @@
     {
       "id": "websites",
       "tier": "brief",
-      "label_short": "Crypto-theft attack compromises 170+ sites",
+      "label_short": "Crypto-theft attack hits 170+ sites",
       "region": "ONLINE",
       "place": "Online",
       "utc_offset": null,
