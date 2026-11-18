@@ -1,0 +1,120 @@
+{
+  "date": {
+    "weekday": "WEDNESDAY",
+    "day": "18 NOVEMBER 2026",
+    "kicker": "THE WORLD'S NEWS IN ONE PICTURE"
+  },
+  "footer": "Sums up the world's news of Wednesday 18 Nov 2026 · stories as reported by wire services and newspapers that day",
+  "stories": [
+    {
+      "id": "apec",
+      "icon": "apec",
+      "region": "ASIA-PACIFIC",
+      "field": "DIPLOMACY",
+      "headline": "APEC summit opens in Shenzhen",
+      "sub": "Xi urges lower tariffs; Putin, Trump arrive",
+      "sources": [
+        "Xinhua 18 Nov 2026",
+        "dpa via Yahoo 18 Nov 2026",
+        "CNBC 17-18 Nov 2026",
+        "The Standard (HK) 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "gulf",
+      "icon": "drone",
+      "region": "MIDDLE EAST",
+      "field": "CONFLICT",
+      "headline": "Kuwait downs drones, Gulf on alert",
+      "sub": "Bahrain blames Iran after US strike on Qeshm",
+      "sources": [
+        "Al Jazeera live 18 Nov 2026",
+        "Anadolu 18 Nov 2026",
+        "Gulf News / Iran International 17 Nov 2026"
+      ]
+    },
+    {
+      "id": "nvidia",
+      "icon": "chip",
+      "region": "AMERICAS",
+      "field": "BUSINESS",
+      "headline": "Nvidia: record $116bn quarter",
+      "sub": "Board rules out return of ousted CEO Huang",
+      "sources": [
+        "CNBC 17 Nov 2026",
+        "Scripps News 17 Nov 2026",
+        "The Standard (HK) 18 Nov 2026",
+        "ABC Australia 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "voyager",
+      "icon": "voyager",
+      "region": "SPACE",
+      "field": "SCIENCE",
+      "headline": "Voyager 1 reaches one light-day",
+      "sub": "25.9bn km from Earth, 49 years after launch",
+      "sources": [
+        "NASA Science (milestone 10:16 UTC 18 Nov 2026)",
+        "EarthSky 17 Nov 2026",
+        "NPR 17 Nov 2026",
+        "ScienceAlert"
+      ]
+    },
+    {
+      "id": "cop31",
+      "icon": "climate",
+      "region": "EUROPE",
+      "field": "CLIMATE",
+      "headline": "COP31 talks split over fossil fuels",
+      "sub": "Ministers wrangle over Antalya draft deal",
+      "sources": [
+        "Al Jazeera 17 Nov 2026",
+        "PACNEWS 18 Nov 2026",
+        "Hurriyet Daily News",
+        "Climate Home News 16 Nov 2026"
+      ]
+    },
+    {
+      "id": "settlers",
+      "icon": "sanction",
+      "region": "OCEANIA",
+      "field": "DIPLOMACY",
+      "headline": "Australia sanctions Israeli settlers",
+      "sub": "West Bank expansion groups targeted",
+      "sources": [
+        "ABC Australia 18 Nov 2026",
+        "BusinessWorld (Reuters) 18 Nov 2026",
+        "TRT World 18 Nov 2026",
+        "Al Jazeera 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "ebola",
+      "icon": "virus",
+      "region": "AFRICA",
+      "field": "HEALTH",
+      "headline": "Ebola tops 11,000 cases in DR Congo",
+      "sub": "WHO: cases doubled in three months",
+      "sources": [
+        "UN News 17 Nov 2026 (WHO Emergency Committee)",
+        "ECDC 16 Nov 2026",
+        "Al Jazeera 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "word",
+      "icon": "dictionary",
+      "region": "CULTURE",
+      "field": "LANGUAGE",
+      "headline": "Word of the year: “human”",
+      "sub": "Cambridge Dictionary answers the AI age",
+      "sources": [
+        "Cambridge Dictionary blog 18 Nov 2026",
+        "CNN 17-18 Nov 2026",
+        "CP24 18 Nov 2026",
+        "ABC News (AP)"
+      ]
+    }
+  ]
+}
