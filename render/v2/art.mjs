@@ -1,4 +1,4 @@
-// render/art.mjs: original pictograms drawn in code (SVG). No external images.
+// render/v2/art.mjs: (v2, earlier design) original pictograms drawn in code (SVG). No external images.
 //
 // ICONS[name](colour)  -> SVG content for a 120x120 viewBox (rounded tile), used on the numbered cards.
 // SCENES[name](colour) -> SVG content for a 330x110 viewBox, used as the illustration of a hero panel.

@@ -1,10 +1,10 @@
-// render/pages.mjs: turns stories.json into HTML pages for headless Chrome.
+// render/v2/pages.mjs: (v2, earlier design; not the entry) turns stories.json into HTML pages for headless Chrome.
 //
-//   squarePage(data, 'en' | 'zh') -> 1024x1024 front page (the English one is the entry)
+//   squarePage(data, 'en' | 'zh') -> 1024x1024 front page (the English one was the v2 entry; zh is reference/zh-tw.png)
 //   portraitPage(data)            -> 1080-wide bilingual page for phones (English, then Traditional Chinese)
 //
 // Every text box that could overflow carries class "fit"; a small script in the page shrinks its type until it fits
-// and records anything that still overflows in <body data-report>, which render-entry.mjs reads back and fails on.
+// and records anything that still overflows in <body data-report>, which render/v2/render-reference.mjs reads back and fails on.
 
 import { ICONS, SCENES } from './art.mjs';
 

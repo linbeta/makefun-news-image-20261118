@@ -2,3 +2,4 @@ out/
 node_modules/
 *.jsonl
 .env
+__pycache__/
