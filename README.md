@@ -10,34 +10,45 @@ An entry for the make.fun bounty **Sum up 18 November's world news in one image*
 
 ![entry](entry.png)
 
-`entry.png` (1024x1024 PNG) is a front page of eight stories from 18 November 2026. Each has a hand-drawn
-pictogram, a short headline and one line of context. The stories span Asia-Pacific, the Middle East, the
-Americas, Europe, Oceania, Africa and space, and cover diplomacy, conflict, business, science, climate, health
-and culture:
+**`entry.png` is the entry** (1024x1024 PNG, English). It is a colour-coded front page of 31 stories from
+Wednesday 18 November 2026, across six continents and space:
 
-| Region · field | Story |
-| --- | --- |
-| Asia-Pacific · diplomacy | APEC summit opens in Shenzhen: Xi urges lower tariffs; Putin, Trump arrive |
-| Middle East · conflict | Kuwait downs drones, Gulf on alert: Bahrain blames Iran after US strike on Qeshm |
-| Americas · business | Nvidia posts record ~$116bn quarter; board rules out ousted CEO Huang's return |
-| Space · science | Voyager 1 reaches one light-day (25.9bn km) from Earth |
-| Europe · climate | COP31 talks in Antalya split over fossil fuels |
-| Oceania · diplomacy | Australia sanctions Israeli settlers and West Bank expansion groups |
-| Africa · health | Ebola tops 11,000 cases in DR Congo; WHO says cases doubled in three months |
-| Culture · language | Cambridge Dictionary names "human" its word of the year |
+- a masthead with the date and the line "31 STORIES · 6 CONTINENTS · ONE DAY", plus a note that every story
+  happened, or was first reported, on that day and that disputed claims are attributed;
+- three numbered hero panels with drawn scenes (APEC opens in Shenzhen; new drone attacks on Kuwait and Bahrain
+  and a US strike on Qeshm; Category 5 Cyclone Xavier in the Cook Islands);
+- nine numbered cards with pictograms (Nvidia, Voyager 1's light-day milestone due at 10:16 UTC, COP31, Gaza truce
+  warning, Australian sanctions on settlers, tear gas finding, NSA network outage, Fiji drought, word of the year);
+- **the day-sweep strip**: 18 November starts at the date line and ends 50 hours later in the mid-Pacific, and each
+  story's number sits in the time zone where it happened, so the strip doubles as a "where" map;
+- a compact numbered list, "Also on 18 November", with 19 more stories, a region colour key, and a sources line.
+
+Every story, with its region, place, time and the outlets it was checked against, is in `stories.json`.
+
+## Reference images (not the entry)
+
+These are drawn from the same `stories.json`, in the same order, but are not submitted and `main.ts` never reads them:
+
+- `reference/zh-tw.png`: the same front page in Traditional Chinese (Taiwan usage), 1024x1024, set in Noto Sans CJK TC.
+- `reference/bilingual-portrait.png`: a 1080-pixel-wide page for reading on a phone, English on top and Traditional
+  Chinese below.
 
 ## Files
 
-- `main.ts`: the entry program (Node 22, standard library only, no network). It checks `entry.png`
-  (PNG signature, every chunk's CRC, IHDR size at most 1024x1024, IEND present, at most 1 MiB) and writes the
-  same bytes to `$MAKEFUN_OUTPUT_DIR/entry.png` (default `/output/entry.png`). It fails loudly if any check fails.
-- `entry.png`: the committed image.
-- `stories.json`: **the stories**, the only file to edit when the day's news moves on. It holds the date
-  header, the footer, and for each story its region, field, headline, one line of context, pictogram name
-  and the outlets it was checked against.
-- `render-entry.mjs`: the renderer. It turns `stories.json` into an HTML page with hand-drawn SVG pictograms
-  (`apec`, `drone`, `chip`, `voyager`, `climate`, `sanction`, `virus`, `dictionary`) and screenshots it at
-  1024x1024 with headless Chrome into `entry.png`.
+- `main.ts`: the entry program (Node 22+, standard library only, no network). It checks `entry.png` (PNG signature,
+  every chunk's CRC, IHDR size at most 1024x1024, IDAT and IEND present, at most 1 MiB) and writes the same bytes to
+  `$MAKEFUN_OUTPUT_DIR/entry.png` (default `/output/entry.png`). It fails loudly if any check fails. Only `entry.png` is
+  read or written.
+- `entry.png`: the committed entry image.
+- `stories.json`: **the stories**, the only file to edit when the news moves on. Each story appears once with its
+  tier (`hero`, `card` or `brief`), region, place, UTC offset (its spot on the day-sweep strip), time in UTC, pictogram,
+  sources, and English and Traditional Chinese kicker, headline and (for heroes and cards) one line of context. The order
+  of the list is the numbering in the images. In a Chinese headline, `|` marks where the line may break.
+- `render-entry.mjs`: the renderer's command line. It writes the three PNGs with headless Chrome. Before each screenshot
+  it reads back the laid-out page and stops if any text box overflows.
+- `render/pages.mjs`: the layouts (1024 front page in English or Chinese, bilingual portrait, day-sweep strip).
+- `render/art.mjs`: the pictograms and hero scenes, drawn in SVG by code.
+- `reference/`: the two reference images described above.
 
 ## Run
 
@@ -45,17 +56,18 @@ and culture:
 mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-## Regenerate the image
+## Regenerate the images
 
-Requires Google Chrome or Chromium, plus the Oswald, Inter and Noto Serif fonts installed on the system.
+Requires Google Chrome or Chromium and the system fonts Oswald, Inter, Inter Tight, Noto Serif and Noto Sans CJK TC.
 
 ```sh
-node render-entry.mjs            # writes out/entry.html and entry.png
+node render-entry.mjs                 # entry.png, reference/zh-tw.png, reference/bilingual-portrait.png
+node render-entry.mjs entry           # only the entry (also: zh, portrait)
 CHROME=chromium node render-entry.mjs
 ```
 
-To refresh the stories, edit `stories.json` (keep headlines to about six words and one short line of context),
-re-run the renderer, look at the PNG at full size and at 300 px wide, then run `main.ts` again.
+To refresh the stories, edit `stories.json`. Keep it to 3 heroes and 9 cards; the brief list takes about 18 to 21 items.
+Re-run the renderer, look at `entry.png` at full size and at 300 px wide, then run `main.ts` again.
 
 ## Licence
 

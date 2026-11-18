@@ -1,119 +1,736 @@
 {
-  "date": {
-    "weekday": "WEDNESDAY",
-    "day": "18 NOVEMBER 2026",
-    "kicker": "THE WORLD'S NEWS IN ONE PICTURE"
+  "_howto": "Every story appears once. Order = number in the image. tier: hero (3), card (9), brief (the rest). region picks the colour; utc_offset places the number on the day-sweep strip (null = off the strip). Keep en.headline short (heroes about 40 characters, cards about 36, briefs about 52). Re-render with: node render-entry.mjs In a zh headline, '|' marks where a line may break (Chinese lines break only there and after punctuation); it is never drawn.",
+  "meta": {
+    "date_iso": "2026-11-18",
+    "en": {
+      "weekday": "WEDNESDAY",
+      "date": "18 NOVEMBER 2026",
+      "tagline": "THE WORLD'S NEWS IN ONE PICTURE",
+      "breadth": "{n} STORIES · 6 CONTINENTS · ONE DAY",
+      "note": "Every story here happened, or was first reported, on Wednesday 18 November 2026. Disputed claims are attributed.",
+      "also": "ALSO ON 18 NOVEMBER",
+      "sweep_title": "THE DAY SWEEPS WEST",
+      "sweep_sub": "18 Nov starts at the date line and ends 50 hours later in the mid-Pacific. Each number sits in its story's time zone.",
+      "sweep_start": "DAY BEGINS",
+      "sweep_end": "DAY ENDS",
+      "space": "DEEP SPACE",
+      "online": "ONLINE",
+      "sources_label": "Checked against"
+    },
+    "zh": {
+      "weekday": "星期三",
+      "date": "2026年11月18日",
+      "tagline": "一張圖看懂全球新聞",
+      "breadth": "{n}則新聞 · 六大洲 · 同一天",
+      "note": "本圖每則新聞皆發生於或首度報導於2026年11月18日（星期三）；有爭議的說法均註明出處。",
+      "also": "11月18日其他新聞",
+      "sweep_title": "一天由東向西",
+      "sweep_sub": "11月18日從國際換日線開始，50小時後在太平洋中部結束。每個編號標在新聞發生地的時區。",
+      "sweep_start": "一天開始",
+      "sweep_end": "一天結束",
+      "space": "深空",
+      "online": "網路",
+      "sources_label": "查證來源"
+    },
+    "sources_footer": [
+      "Xinhua",
+      "AFP / France 24",
+      "Al Jazeera",
+      "ABC Australia",
+      "RNZ",
+      "Reuters",
+      "CNN",
+      "Dawn",
+      "Ukrinform",
+      "Focus Taiwan",
+      "The Standard HK",
+      "Korea Herald",
+      "NASA"
+    ]
   },
-  "footer": "Sums up the world's news of Wednesday 18 Nov 2026 · stories as reported by wire services and newspapers that day",
+  "regions": {
+    "ASIA": {
+      "colour": "#d62828",
+      "en": "ASIA",
+      "zh": "亞洲"
+    },
+    "MIDEAST": {
+      "colour": "#e46a00",
+      "en": "MIDDLE EAST",
+      "zh": "中東"
+    },
+    "EUROPE": {
+      "colour": "#0f8a6c",
+      "en": "EUROPE",
+      "zh": "歐洲"
+    },
+    "AFRICA": {
+      "colour": "#b07a00",
+      "en": "AFRICA",
+      "zh": "非洲"
+    },
+    "AMERICAS": {
+      "colour": "#1d5fbf",
+      "en": "AMERICAS",
+      "zh": "美洲"
+    },
+    "OCEANIA": {
+      "colour": "#0a86b0",
+      "en": "OCEANIA",
+      "zh": "大洋洲"
+    },
+    "SPACE": {
+      "colour": "#5b3fa8",
+      "en": "SPACE",
+      "zh": "太空"
+    },
+    "ONLINE": {
+      "colour": "#59606b",
+      "en": "ONLINE",
+      "zh": "網路"
+    }
+  },
   "stories": [
     {
       "id": "apec",
+      "tier": "hero",
+      "region": "ASIA",
       "icon": "apec",
-      "region": "ASIA-PACIFIC",
-      "field": "DIPLOMACY",
-      "headline": "APEC summit opens in Shenzhen",
-      "sub": "Xi urges lower tariffs; Putin, Trump arrive",
+      "place": "Shenzhen, China",
+      "utc_offset": 8,
+      "time_utc": "2026-11-18 ~02:00-04:00 (Xi-Lee meeting 03:06, Xi-Putin 04:02 Xinhua timestamps)",
+      "en": {
+        "kicker": "CHINA · DIPLOMACY",
+        "headline": "Xi opens APEC summit in Shenzhen",
+        "line": "Calls for AI cooperation and fewer trade barriers; meets Putin and South Korea's Lee. Trump–Xi talks are expected on Thursday."
+      },
+      "zh": {
+        "kicker": "中國 · 外交",
+        "headline": "習近平在深圳|揭幕APEC峰會",
+        "line": "呼籲加強AI合作、消除貿易壁壘；會晤普丁與南韓總統李在明。川習會預計週四登場。"
+      },
       "sources": [
-        "Xinhua 18 Nov 2026",
-        "dpa via Yahoo 18 Nov 2026",
-        "CNBC 17-18 Nov 2026",
-        "The Standard (HK) 18 Nov 2026"
+        "Xinhua 18 Nov 2026 (Xi meets Putin; Xi meets Lee Jae Myung; Xi urges cutting trade barriers)",
+        "France 24 / AFP 18 Nov 2026 (Xi opens APEC, Trump expected to meet Xi on 19 Nov)",
+        "ABC Australia live 18 Nov 2026",
+        "RNZ 18 Nov 2026"
       ]
     },
     {
       "id": "gulf",
-      "icon": "drone",
-      "region": "MIDDLE EAST",
-      "field": "CONFLICT",
-      "headline": "Kuwait downs drones, Gulf on alert",
-      "sub": "Bahrain blames Iran after US strike on Qeshm",
+      "tier": "hero",
+      "region": "MIDEAST",
+      "icon": "gulf",
+      "place": "Kuwait, Bahrain, Qeshm Island (Iran)",
+      "utc_offset": 3,
+      "time_utc": "2026-11-18 overnight (France 24 live from 03:02)",
+      "en": {
+        "kicker": "GULF · CONFLICT",
+        "headline": "Kuwait, Bahrain report new drone attacks",
+        "line": "Bahrain blames Iran; a US official says jets hit an IRGC launch site on Qeshm. Iran's army says it targeted US sites in Kuwait."
+      },
+      "zh": {
+        "kicker": "波斯灣 · 衝突",
+        "headline": "科威特、巴林|再傳遭無人機攻擊",
+        "line": "巴林指控伊朗；美方官員稱戰機轟炸格什姆島革命衛隊發射場。伊朗陸軍稱鎖定科威特境內美軍設施。"
+      },
       "sources": [
-        "Al Jazeera live 18 Nov 2026",
-        "Anadolu 18 Nov 2026",
-        "Gulf News / Iran International 17 Nov 2026"
+        "France 24 Middle East live (AFP) 18 Nov 2026",
+        "Xinhua 18 Nov 2026 (US strikes Qeshm; Iranian army says it targeted US installations in Kuwait)",
+        "Al Jazeera 17-18 Nov 2026"
+      ]
+    },
+    {
+      "id": "xavier",
+      "tier": "hero",
+      "region": "OCEANIA",
+      "icon": "cyclone",
+      "place": "Northern Cook Islands",
+      "utc_offset": -10,
+      "time_utc": "2026-11-18 (Category 5 on Wednesday morning NZ time; RNZ 03:47 UTC)",
+      "en": {
+        "kicker": "COOK ISLANDS · DISASTER",
+        "headline": "Category 5 Cyclone Xavier lashes Cook Islands",
+        "line": "Gusts up to 315 km/h. Shelters open in the northern atolls as the storm heads for Pukapuka and Nassau."
+      },
+      "zh": {
+        "kicker": "庫克群島 · 災害",
+        "headline": "五級氣旋Xavier|襲擊庫克群島北部",
+        "line": "陣風每小時達315公里。北部環礁開放避難所，風暴正逼近普卡普卡島與納索島。"
+      },
+      "sources": [
+        "RNZ Pacific 18 Nov 2026 (Category 5 Xavier; Fiji Met Service gusts to 315 km/h; Cook Islands Met Service)"
       ]
     },
     {
       "id": "nvidia",
-      "icon": "chip",
+      "tier": "card",
       "region": "AMERICAS",
-      "field": "BUSINESS",
-      "headline": "Nvidia: record $116bn quarter",
-      "sub": "Board rules out return of ousted CEO Huang",
+      "icon": "chip",
+      "place": "Santa Clara, USA",
+      "utc_offset": -8,
+      "time_utc": "results after the US close on 17 Nov (about 21:20 UTC), first reported in Asia on 18 Nov",
+      "en": {
+        "kicker": "USA · BUSINESS",
+        "headline": "Nvidia beats forecasts amid CEO saga",
+        "line": "Board rules out ex-CEO Jensen Huang's return; Huang says he'd be 'honored'."
+      },
+      "zh": {
+        "kicker": "美國 · 商業",
+        "headline": "輝達財報優於預期，|執行長風波未平",
+        "line": "董事會排除前執行長黃仁勳回任；黃仁勳稱若獲邀回鍋「深感榮幸」。"
+      },
       "sources": [
-        "CNBC 17 Nov 2026",
-        "Scripps News 17 Nov 2026",
-        "The Standard (HK) 18 Nov 2026",
-        "ABC Australia 18 Nov 2026"
+        "Al Jazeera 18 Nov 2026",
+        "RNZ 18 Nov 2026 (shares rise as Nvidia beats forecasts; Huang willing to be reinstated)",
+        "The Standard HK morning recap 18 Nov 2026"
       ]
     },
     {
       "id": "voyager",
-      "icon": "voyager",
+      "tier": "card",
       "region": "SPACE",
-      "field": "SCIENCE",
-      "headline": "Voyager 1 reaches one light-day",
-      "sub": "25.9bn km from Earth, 49 years after launch",
+      "icon": "voyager",
+      "place": "Deep space",
+      "utc_offset": null,
+      "time_utc": "2026-11-18 10:16 UTC (NASA prediction)",
+      "en": {
+        "kicker": "DEEP SPACE · SCIENCE",
+        "headline": "Voyager 1 reaches one light-day today",
+        "line": "Due at 10:16 UTC: 25.9bn km away, a radio signal takes 24 hours."
+      },
+      "zh": {
+        "kicker": "深空 · 科學",
+        "headline": "航海家1號今日|抵達一光日距離",
+        "line": "預計世界協調時間10:16抵達：距地球259億公里，無線電訊號單程需24小時。"
+      },
       "sources": [
-        "NASA Science (milestone 10:16 UTC 18 Nov 2026)",
-        "EarthSky 17 Nov 2026",
-        "NPR 17 Nov 2026",
-        "ScienceAlert"
+        "NASA (milestone predicted 18 Nov 2026 10:16 UTC)",
+        "RNZ / ABC 18 Nov 2026 ('to reach historic light-day milestone today')"
       ]
     },
     {
       "id": "cop31",
-      "icon": "climate",
+      "tier": "card",
       "region": "EUROPE",
-      "field": "CLIMATE",
-      "headline": "COP31 talks split over fossil fuels",
-      "sub": "Ministers wrangle over Antalya draft deal",
+      "icon": "climate",
+      "place": "Antalya, Türkiye",
+      "utc_offset": 3,
+      "time_utc": "reported 2026-11-18 (Dawn/AFP 00:39 UTC)",
+      "en": {
+        "kicker": "ANTALYA · CLIMATE",
+        "headline": "COP31 draft deal splits climate talks",
+        "line": "EU says Australia's text needs big changes; talks are due to end on Friday."
+      },
+      "zh": {
+        "kicker": "安塔利亞 · 氣候",
+        "headline": "COP31協議草案|引發各國分歧",
+        "line": "歐盟稱澳洲提出的草案需大幅修改；會議預定週五閉幕。"
+      },
       "sources": [
-        "Al Jazeera 17 Nov 2026",
-        "PACNEWS 18 Nov 2026",
-        "Hurriyet Daily News",
-        "Climate Home News 16 Nov 2026"
+        "Dawn / AFP 18 Nov 2026 ('Tensions rise over proposed deal at COP31')"
+      ]
+    },
+    {
+      "id": "gaza",
+      "tier": "card",
+      "region": "MIDEAST",
+      "icon": "dove",
+      "place": "Gaza / UN Security Council",
+      "utc_offset": 2,
+      "time_utc": "reported 2026-11-18",
+      "en": {
+        "kicker": "GAZA · DIPLOMACY",
+        "headline": "Gaza truce at risk, Board of Peace warns",
+        "line": "Report asks the UN Security Council to press Israel and Hamas to deliver."
+      },
+      "zh": {
+        "kicker": "加薩 · 外交",
+        "headline": "和平委員會警告|加薩停火恐瓦解",
+        "line": "報告請聯合國安理會敦促以色列與哈瑪斯履行承諾。"
+      },
+      "sources": [
+        "Al Jazeera / AP 18 Nov 2026"
       ]
     },
     {
       "id": "settlers",
-      "icon": "sanction",
+      "tier": "card",
       "region": "OCEANIA",
-      "field": "DIPLOMACY",
-      "headline": "Australia sanctions Israeli settlers",
-      "sub": "West Bank expansion groups targeted",
+      "icon": "sanction",
+      "place": "Canberra, Australia",
+      "utc_offset": 11,
+      "time_utc": "06:50 AEDT 18 Nov 2026 (19:50 UTC 17 Nov); first reported 18 Nov in Australia",
+      "en": {
+        "kicker": "AUSTRALIA · DIPLOMACY",
+        "headline": "Australia sanctions settler leader Weiss",
+        "line": "Three people and four groups, including a firm building West Bank settlements."
+      },
+      "zh": {
+        "kicker": "澳洲 · 外交",
+        "headline": "澳洲制裁|屯墾運動領袖魏斯",
+        "line": "制裁3人與4個組織，首度納入興建約旦河西岸屯墾區的營建公司。"
+      },
+      "sources": [
+        "ABC Australia live 18 Nov 2026 (Penny Wong; Daniella Weiss)"
+      ]
+    },
+    {
+      "id": "csgas",
+      "tier": "card",
+      "region": "EUROPE",
+      "icon": "gasmask",
+      "place": "Ukraine / The Hague",
+      "utc_offset": 2,
+      "time_utc": "reported 2026-11-18",
+      "en": {
+        "kicker": "UKRAINE · CONFLICT",
+        "headline": "Russia used tear gas on troops, report says",
+        "line": "OPCW-backed probe of a 2024 drone drop; New Zealand 'deeply concerned'."
+      },
+      "zh": {
+        "kicker": "烏克蘭 · 衝突",
+        "headline": "報告：俄軍曾對|烏軍施放催淚瓦斯",
+        "line": "禁止化學武器組織支持的調查，涉2024年無人機投擲事件；紐西蘭「深表關切」。"
+      },
+      "sources": [
+        "RNZ 18 Nov 2026 (OPCW-supported Ukrainian investigation; CS gas; Winston Peters)"
+      ]
+    },
+    {
+      "id": "outage",
+      "tier": "card",
+      "region": "AMERICAS",
+      "icon": "outage",
+      "place": "Washington, USA",
+      "utc_offset": -5,
+      "time_utc": "first reported late 17 Nov US time (18 Nov in Asia); Rubio remarks in Manila 18 Nov",
+      "en": {
+        "kicker": "USA · SECURITY",
+        "headline": "Outage hits NSA's classified network",
+        "line": "NSA cites routine maintenance; Rubio sees no sign of cyberattacks."
+      },
+      "zh": {
+        "kicker": "美國 · 資安",
+        "headline": "美國國安局|機密網路當機",
+        "line": "國安局稱係例行維護；盧比歐表示無遭網攻跡象。"
+      },
+      "sources": [
+        "CNN via RNZ 18 Nov 2026 (NSANet outage; NSA statement)",
+        "Dawn 18 Nov 2026",
+        "Al Jazeera 18 Nov 2026 (Rubio rules out cyberattacks)"
+      ]
+    },
+    {
+      "id": "fiji",
+      "tier": "card",
+      "region": "OCEANIA",
+      "icon": "drought",
+      "place": "Fiji",
+      "utc_offset": 12,
+      "time_utc": "2026-11-18 (RNZ 01:44 UTC)",
+      "en": {
+        "kicker": "FIJI · CLIMATE",
+        "headline": "Fiji declares disaster over drought",
+        "line": "El Niño dry spell: night water cuts in Suva, wildfires every day."
+      },
+      "zh": {
+        "kicker": "斐濟 · 氣候",
+        "headline": "斐濟因乾旱|宣布全國災難狀態",
+        "line": "聖嬰現象引發乾旱：蘇瓦夜間限水，野火天天延燒。"
+      },
+      "sources": [
+        "RNZ Pacific 18 Nov 2026 (PM Sitiveni Rabuka; FJ$20m redirected)"
+      ]
+    },
+    {
+      "id": "human",
+      "tier": "card",
+      "region": "EUROPE",
+      "icon": "dictionary",
+      "place": "Cambridge, UK",
+      "utc_offset": 0,
+      "time_utc": "announced 18 Nov 2026 (ABC Australia 01:45 UTC)",
+      "en": {
+        "kicker": "CULTURE · LANGUAGE",
+        "headline": "Word of the year: “human”",
+        "line": "Cambridge Dictionary's pick reflects anxiety about AI."
+      },
+      "zh": {
+        "kicker": "文化 · 語言",
+        "headline": "劍橋詞典年度詞彙：|human",
+        "line": "反映人們對人工智慧的焦慮。"
+      },
       "sources": [
         "ABC Australia 18 Nov 2026",
-        "BusinessWorld (Reuters) 18 Nov 2026",
-        "TRT World 18 Nov 2026",
+        "RNZ 18 Nov 2026 ('AI anxiety shapes Cambridge Dictionary's Word of the Year')"
+      ]
+    },
+    {
+      "id": "cricket",
+      "tier": "brief",
+      "region": "OCEANIA",
+      "place": "Melbourne, Australia",
+      "utc_offset": 11,
+      "time_utc": "2026-11-18 (AFP 05:05)",
+      "en": {
+        "kicker": "SPORT",
+        "headline": "Cricket Australia to hold ‘Sandpapergate’ forum"
+      },
+      "zh": {
+        "kicker": "體育",
+        "headline": "澳洲板球總會將辦「砂紙門」座談，不重啟調查"
+      },
+      "sources": [
+        "AFP via France 24 18 Nov 2026",
+        "ABC Australia 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "brisbane",
+      "tier": "brief",
+      "region": "OCEANIA",
+      "place": "Brisbane, Australia",
+      "utc_offset": 10,
+      "time_utc": "2026-11-18 (ABC 04:10 UTC)",
+      "en": {
+        "kicker": "SPORT",
+        "headline": "Brisbane Olympic stadium early, costs queried"
+      },
+      "zh": {
+        "kicker": "體育",
+        "headline": "布里斯本奧運主場館進度超前，成本受質疑"
+      },
+      "sources": [
+        "ABC Australia 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "compact",
+      "tier": "brief",
+      "region": "OCEANIA",
+      "place": "Palau, Micronesia, Marshall Islands",
+      "utc_offset": 10,
+      "time_utc": "2026-11-18 (RNZ 02:01 UTC)",
+      "en": {
+        "kicker": "AID",
+        "headline": "US sets $450m+ for Palau, Micronesia, Marshalls"
+      },
+      "zh": {
+        "kicker": "援助",
+        "headline": "美國撥款逾4.5億美元予帛琉、密克羅尼西亞、馬紹爾"
+      },
+      "sources": [
+        "RNZ Pacific 18 Nov 2026 (via Pacific Island Times)"
+      ]
+    },
+    {
+      "id": "boat",
+      "tier": "brief",
+      "region": "ASIA",
+      "place": "South Korea",
+      "utc_offset": 9,
+      "time_utc": "2026-11-18",
+      "en": {
+        "kicker": "ACCIDENT",
+        "headline": "S. Korea: fishing boat with 7 aboard missing"
+      },
+      "zh": {
+        "kicker": "意外",
+        "headline": "南韓西岸外海漁船失聯，船上7人"
+      },
+      "sources": [
+        "Korea Herald 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "leaders",
+      "tier": "brief",
+      "region": "OCEANIA",
+      "place": "Shenzhen, China",
+      "utc_offset": 8,
+      "time_utc": "2026-11-18 (Albanese landed 03:00 UTC)",
+      "en": {
+        "kicker": "DIPLOMACY",
+        "headline": "Albanese and Luxon head to Shenzhen for APEC"
+      },
+      "zh": {
+        "kicker": "外交",
+        "headline": "艾班尼斯、盧克森赴深圳出席APEC"
+      },
+      "sources": [
+        "ABC Australia live 18 Nov 2026",
+        "RNZ 18 Nov 2026",
+        "Xinhua 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "shih",
+      "tier": "brief",
+      "region": "ASIA",
+      "place": "Taipei, Taiwan",
+      "utc_offset": 8,
+      "time_utc": "2026-11-18 (Focus Taiwan 02:48 UTC)",
+      "en": {
+        "kicker": "DIPLOMACY",
+        "headline": "Stan Shih to represent Taiwan at APEC"
+      },
+      "zh": {
+        "kicker": "外交",
+        "headline": "宏碁創辦人施振榮代表台灣出席APEC"
+      },
+      "sources": [
+        "Focus Taiwan (CNA) 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "6g",
+      "tier": "brief",
+      "region": "ASIA",
+      "place": "China",
+      "utc_offset": 8,
+      "time_utc": "2026-11-18",
+      "en": {
+        "kicker": "TECH",
+        "headline": "China approves 8 regions for 6G pilot scheme"
+      },
+      "zh": {
+        "kicker": "科技",
+        "headline": "中國核准8個省級地區試行6G創新"
+      },
+      "sources": [
+        "Xinhua 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "leonids",
+      "tier": "brief",
+      "region": "ASIA",
+      "place": "Heilongjiang, China",
+      "utc_offset": 8,
+      "time_utc": "night of 17-18 Nov 2026 (shower peak)",
+      "en": {
+        "kicker": "SKY",
+        "headline": "Leonid meteors light up northeast China"
+      },
+      "zh": {
+        "kicker": "天象",
+        "headline": "獅子座流星雨極大期，中國東北可見"
+      },
+      "sources": [
+        "Xinhua 18 Nov 2026",
+        "Al Jazeera 17 Nov 2026 (peak on the night of 17-18 Nov)"
+      ]
+    },
+    {
+      "id": "irgc",
+      "tier": "brief",
+      "region": "MIDEAST",
+      "place": "Iraq",
+      "utc_offset": 3,
+      "time_utc": "2026-11-18",
+      "en": {
+        "kicker": "DIPLOMACY",
+        "headline": "Top IRGC commander in Iraq amid militia tensions"
+      },
+      "zh": {
+        "kicker": "外交",
+        "headline": "伊朗革命衛隊高層赴伊拉克，民兵關係緊張"
+      },
+      "sources": [
         "Al Jazeera 18 Nov 2026"
       ]
     },
     {
-      "id": "ebola",
-      "icon": "virus",
+      "id": "drc",
+      "tier": "brief",
       "region": "AFRICA",
-      "field": "HEALTH",
-      "headline": "Ebola tops 11,000 cases in DR Congo",
-      "sub": "WHO: cases doubled in three months",
+      "place": "Bukavu, DR Congo",
+      "utc_offset": 2,
+      "time_utc": "reported 2026-11-18",
+      "en": {
+        "kicker": "CONFLICT",
+        "headline": "DR Congo: Kivu fighting outlasts peace deals"
+      },
+      "zh": {
+        "kicker": "衝突",
+        "headline": "剛果民主共和國：基伍戰事未因和平協議止息"
+      },
       "sources": [
-        "UN News 17 Nov 2026 (WHO Emergency Committee)",
-        "ECDC 16 Nov 2026",
+        "Al Jazeera (Bukavu) 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "kigali",
+      "tier": "brief",
+      "region": "AFRICA",
+      "place": "Kigali, Rwanda",
+      "utc_offset": 2,
+      "time_utc": "scheduled 18-20 Nov 2026",
+      "en": {
+        "kicker": "ECONOMY",
+        "headline": "Africa Fintech Summit set to open in Kigali"
+      },
+      "zh": {
+        "kicker": "經濟",
+        "headline": "非洲金融科技峰會預定於吉佳利開幕"
+      },
+      "sources": [
+        "Fintech Weekly / Financial Afrik event listings (18-20 Nov 2026, Kigali Convention Centre)"
+      ]
+    },
+    {
+      "id": "harry",
+      "tier": "brief",
+      "region": "EUROPE",
+      "place": "Ukraine",
+      "utc_offset": 2,
+      "time_utc": "2026-11-18 (Ukrinform 02:25 UTC)",
+      "en": {
+        "kicker": "PEOPLE",
+        "headline": "Prince Harry visits Ukraine"
+      },
+      "zh": {
+        "kicker": "人物",
+        "headline": "哈利王子訪問烏克蘭，獲贈赫爾松兒童畫作"
+      },
+      "sources": [
+        "Ukrinform 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "robots",
+      "tier": "brief",
+      "region": "EUROPE",
+      "place": "Germany",
+      "utc_offset": 1,
+      "time_utc": "2026-11-18 (Ukrinform 01:30 UTC)",
+      "en": {
+        "kicker": "DEFENCE",
+        "headline": "Germany, Ukraine to co-build ground drones"
+      },
+      "zh": {
+        "kicker": "國防",
+        "headline": "德國與烏克蘭將合作生產無人地面載具"
+      },
+      "sources": [
+        "Ukrinform 18 Nov 2026 (Boris Pistorius)"
+      ]
+    },
+    {
+      "id": "ukaid",
+      "tier": "brief",
+      "region": "EUROPE",
+      "place": "London, UK",
+      "utc_offset": 0,
+      "time_utc": "2026-11-18 (Ukrinform 00:28 UTC)",
+      "en": {
+        "kicker": "DEFENCE",
+        "headline": "UK unveils £240m air-defence aid for Ukraine"
+      },
+      "zh": {
+        "kicker": "國防",
+        "headline": "英國宣布2.4億英鎊援烏防空軍援"
+      },
+      "sources": [
+        "Ukrinform 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "haiti",
+      "tier": "brief",
+      "region": "AMERICAS",
+      "place": "Haiti",
+      "utc_offset": -5,
+      "time_utc": "2026-11-18 (AFP 04:58)",
+      "en": {
+        "kicker": "SECURITY",
+        "headline": "Haiti formalises security pact with El Salvador"
+      },
+      "zh": {
+        "kicker": "安全",
+        "headline": "海地與薩爾瓦多正式簽署安全協定"
+      },
+      "sources": [
+        "AFP via France 24 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "ecuador",
+      "tier": "brief",
+      "region": "AMERICAS",
+      "place": "Ecuador / USA",
+      "utc_offset": -5,
+      "time_utc": "reported 2026-11-18",
+      "en": {
+        "kicker": "LAW",
+        "headline": "Ecuadorian fishers sue US over drone strike"
+      },
+      "zh": {
+        "kicker": "法律",
+        "headline": "厄瓜多漁民就海上無人機攻擊控告美國"
+      },
+      "sources": [
         "Al Jazeera 18 Nov 2026"
       ]
     },
     {
-      "id": "word",
-      "icon": "dictionary",
-      "region": "CULTURE",
-      "field": "LANGUAGE",
-      "headline": "Word of the year: “human”",
-      "sub": "Cambridge Dictionary answers the AI age",
+      "id": "amazon",
+      "tier": "brief",
+      "region": "AMERICAS",
+      "place": "Amazon",
+      "utc_offset": -4,
+      "time_utc": "reported 2026-11-18",
+      "en": {
+        "kicker": "PEOPLE",
+        "headline": "Rare images spotlight threats to isolated Amazon group"
+      },
+      "zh": {
+        "kicker": "人權",
+        "headline": "罕見影像凸顯亞馬遜孤立部落面臨威脅"
+      },
       "sources": [
-        "Cambridge Dictionary blog 18 Nov 2026",
-        "CNN 17-18 Nov 2026",
-        "CP24 18 Nov 2026",
-        "ABC News (AP)"
+        "Al Jazeera 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "alaska",
+      "tier": "brief",
+      "region": "AMERICAS",
+      "place": "Alaska, USA",
+      "utc_offset": -9,
+      "time_utc": "result reported 18 Nov 2026 (AFP 04:49 UTC)",
+      "en": {
+        "kicker": "POLITICS",
+        "headline": "Democrat Peltola wins Alaska Senate seat"
+      },
+      "zh": {
+        "kicker": "政治",
+        "headline": "民主黨佩托拉拿下阿拉斯加參議員席次"
+      },
+      "sources": [
+        "AFP via France 24 18 Nov 2026",
+        "Al Jazeera 18 Nov 2026"
+      ]
+    },
+    {
+      "id": "websites",
+      "tier": "brief",
+      "region": "ONLINE",
+      "place": "Online",
+      "utc_offset": null,
+      "time_utc": "reported 17-18 Nov 2026",
+      "en": {
+        "kicker": "CYBER",
+        "headline": "170+ websites compromised in crypto-theft attack"
+      },
+      "zh": {
+        "kicker": "資安",
+        "headline": "逾170個網站遭入侵，意圖竊取加密貨幣"
+      },
+      "sources": [
+        "Dawn (AFP/Reuters) 18 Nov 2026",
+        "RNZ 18 Nov 2026"
       ]
     }
   ]
